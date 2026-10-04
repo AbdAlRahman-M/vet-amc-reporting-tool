@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.venv/
+data/consumption-files/!.getkeep
+output/!.gitkeep
