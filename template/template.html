@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vet AMC Report - {{ vet_unit_id }}</title>
+
+    <style>{% include 'styles.css' %}</style>
+</head>
+
+<body>
+
+    <header>
+        <h1 id="report-title" class="header">Veterinary Antimicrobial Consumption Report</h1>
+        <ul id="report-header">
+            <li>
+                <span class="descriptor bold">Vet Unit ID</span>
+                <span class="bold">:</span>
+                <span> {{ vet_unit_id }}</span>
+            </li>
+            <li>
+                <span class="descriptor bold">Vet Unit Name</span>
+                <span class="bold">:</span>
+                <span> {{ vet_unit_name }}</span>
+            </li>
+            <li>
+                <span class="descriptor bold">Reporting Period</span>
+                <span class="bold">:</span>
+                <span> {{ reporting_period }}</span>
+            </li>
+        </ul>
+    </header>
+
+    <main>
+
+        <div id="left-col">
+            <section id="kpis">
+                <h2 class="section-header header">Key Performance Indicators</h2>
+                <div id="card-container">
+                    <div id="total-use-container" class="card">
+                        <p class="card-title">Total Quantity Used</p>
+                        <p class="card-callout bold">{{ total_qty }}</p>
+                    </div>
+                    <div id="most-used-container" class="card">
+                        <p class="card-title">Most Used Antimicrobial</p>
+                        <p class="card-callout bold">{{ most_used_am }}</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="class-breakdown">
+                <h2 class="section-header header">Antimicrobial Classes</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th scope="col">Rank</th>
+                                <th scope="col">Class</th>
+                                <th scope="col">Amount<br>(Gram)</th>
+                                <th scope="col">Percent</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in am_class_data %}
+                            <tr>
+                                <td>{{ row.rank }}</td>
+                                <td>{{ row.class }}</td>
+                                <td>{{ row.amount }}</td>
+                                <td>{{ row.percent }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="route-breakdown">
+                <h2 class="section-header header">Routes of Administration</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th scope="col">Rank</th>
+                                <th scope="col">Route</th>
+                                <th scope="col">Amount<br>(Gram)</th>
+                                <th scope="col">Percent</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in routes_data %}
+                            <tr>
+                                <td>{{ row.rank }}</td>
+                                <td>{{ row.route }}</td>
+                                <td>{{ row.amount }}</td>
+                                <td>{{ row.percent }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>    
+
+            <section id="species-breakdown">
+                <h2 class="section-header header">Species</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th scope="col">Rank</th>
+                                <th scope="col">Species</th>
+                                <th scope="col">Amount<br>(Gram)</th>
+                                <th scope="col">Percent</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in species_data %}
+                            <tr>
+                                <td>{{ row.rank }}</td>
+                                <td>{{ row.species }}</td>
+                                <td>{{ row.amount }}</td>
+                                <td>{{ row.percent }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>    
+        </div>
+
+        <div id="right-col">
+            <section id="most-used">
+                <h2 class="section-header header">Most Used Antimicrobials</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th scope="col">Rank</th>
+                                <th scope="col">Substance</th>
+                                <th scope="col">Amount<br>(Gram)</th>
+                                <th scope="col">Percent</th>
+                                <th scope="col">Cumul. Percent</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in most_used_data %}
+                            <tr>
+                                <td>{{ row.rank }}</td>
+                                <td>{{ row.substance }}</td>
+                                <td>{{ row.amount }}</td>
+                                <td>{{ row.percent }}</td>
+                                <td>{{ row.cumul_percent }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div id="footer-left">
+            <ul id="report-footer">
+                <li>General Organization for Veterinary Services</li>
+                <li>The Food and Agriculture Organization of the United Nations</li>
+                <li>Egyptian Drug Authority</li>
+            </ul>
+        </div>
+        <div id="footer-right">
+            <p>Generated: {{ date_generated }}</p>
+        </div>
+    </footer>
+</body>
+
+</html>
