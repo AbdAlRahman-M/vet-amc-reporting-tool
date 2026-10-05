@@ -1,7 +1,9 @@
 import argparse
 import calendar
 from datetime import date
+import pandas as pd
 import re
+import src.transform_data as transform
 import sys
 
 def parse_period_date(d: str) -> tuple[int, int]:
@@ -52,5 +54,27 @@ if __name__ == "__main__":
     period_end = date(end_y, end_m, calendar.monthrange(end_y, end_m)[1])
 
     # Load and transform data
+    print("Loading data...")
+
+    DATA_PATH = "./data/consumption-files/"
+    SHEET_NAME = "Consumption"
+
+    try:
+        df_combined = transform.combine_data(dir_path=DATA_PATH, sheet_name=SHEET_NAME)
+        df_combined = transform.standardize_col_names(df_combined)
+        df_combined = transform.remove_irrelevant_cols(df_combined)
+        df_combined = transform.unpivot_active_subst(df_combined)
+        df_combined = transform.standardize_units(df_combined, "api_per_content", "api_per_content_unit")
+        df_combined = transform.standardize_units(df_combined, "pack_size", "pack_size_unit")
+        df_dim = pd.read_excel("./data/dimensions/substances.xlsx", sheet_name="API")
+        df_combined = transform.get_metric_amounts(df_combined, "api_str", "api_str_unit", df_dim)
+        df_combined = transform.standardize_units(df_combined, "api_str", "api_str_unit")
+    except Exception as e:
+        print("Data transformation failed!")
+        sys.exit(e)
+
+    print("Data loaded and transformed successfully...")
+
+    df_combined.to_excel("./out.xlsx", index=False)
 
     # Generate reports

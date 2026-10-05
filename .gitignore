@@ -3,5 +3,7 @@ __pycache__/
 *$py.class
 *.so
 .venv/
+data/consumption-files/*
 data/consumption-files/!.getkeep
 output/!.gitkeep
+.vscode/
