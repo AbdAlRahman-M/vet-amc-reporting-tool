@@ -3,6 +3,7 @@ import calendar
 from datetime import date
 import pandas as pd
 import re
+import src.generate_report as report
 import src.transform_data as transform
 import sys
 
@@ -64,15 +65,15 @@ if __name__ == "__main__":
 
     try:
         df_combined = transform.combine_data(dir_path=DATA_PATH, sheet_name=SHEET_NAME)
-        df_combined = transform.standardize_col_names(df_combined)
-        df_combined = transform.remove_irrelevant_cols(df_combined)
+        transform.standardize_col_names(df_combined)
+        transform.remove_irrelevant_cols(df_combined)
         df_combined["vet_unit_id"] = df_combined["vet_unit_id"].str.strip().str.upper()
         df_combined = transform.unpivot_active_subst(df_combined)
-        df_combined = transform.standardize_units(df_combined, "api_per_content", "api_per_content_unit")
-        df_combined = transform.standardize_units(df_combined, "pack_size", "pack_size_unit")
+        transform.standardize_units(df_combined, "api_per_content", "api_per_content_unit")
+        transform.standardize_units(df_combined, "pack_size", "pack_size_unit")
         df_dim = pd.read_excel("./data/dimensions/substances.xlsx", sheet_name="API")
-        df_combined = transform.get_metric_amounts(df_combined, "api_str", "api_str_unit", df_dim)
-        df_combined = transform.standardize_units(df_combined, "api_str", "api_str_unit")
+        transform.get_metric_amounts(df_combined, "api_str", "api_str_unit", df_dim)
+        transform.standardize_units(df_combined, "api_str", "api_str_unit")
     except Exception as e:
         print("Data transformation failed!")
         sys.exit(e)
@@ -94,3 +95,4 @@ if __name__ == "__main__":
         sys.exit(f"Invalid veterinary units codes '{','.join(diff)}' found in the data!")
 
     # Generate reports
+    

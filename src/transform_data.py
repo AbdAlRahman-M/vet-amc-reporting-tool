@@ -32,10 +32,10 @@ def combine_data(dir_path, sheet_name) -> pd.DataFrame:
 
     return df_combined
 
-def standardize_col_names(df: pd.DataFrame) -> pd.DataFrame:
+def standardize_col_names(df: pd.DataFrame) -> None:
     """Standardizes column names in the data frame."""
 
-    return df.rename(columns=pascal_to_snake)
+    df.rename(columns=pascal_to_snake, inplace=True)
 
 def remove_irrelevant_cols(
         df: pd.DataFrame,
@@ -44,7 +44,7 @@ def remove_irrelevant_cols(
 
     """Drops columns that are not relevant to the analysis."""
 
-    return df.drop(columns=irrelevant)
+    df.drop(columns=irrelevant, inplace=True)
 
 def unpivot_active_subst(df: pd.DataFrame) -> pd.DataFrame:
     """Transforms data to long format by unpivoting active substance columns."""
@@ -57,7 +57,7 @@ def unpivot_active_subst(df: pd.DataFrame) -> pd.DataFrame:
         suffix=r"\d+"
     ).dropna(subset=["api", "api_str", "api_str_unit"]).reset_index()
 
-def standardize_units(df: pd.DataFrame, measure_col: str, unit_col: str) -> pd.DataFrame:
+def standardize_units(df: pd.DataFrame, measure_col: str, unit_col: str) -> None:
     """Standardize measurements to one unit to allow calculations."""
 
     unit_mapper = {
@@ -71,9 +71,7 @@ def standardize_units(df: pd.DataFrame, measure_col: str, unit_col: str) -> pd.D
         df.loc[mask, measure_col] *=  v["factor"]
         df.loc[mask, unit_col] = v["family"]
 
-    return df
-
-def get_metric_amounts(df: pd.DataFrame, strength_col, unit_col, df_dim: pd.DataFrame) -> pd.DataFrame:
+def get_metric_amounts(df: pd.DataFrame, strength_col, unit_col, df_dim: pd.DataFrame) -> None:
     """Uses factors from the substances dimension talbe to extract weights of active drugs from prodrugs, and converts international units to metric units."""
 
     right_cols = ["api_id", "iu_factor", "prodrug_factor"]
@@ -94,5 +92,3 @@ def get_metric_amounts(df: pd.DataFrame, strength_col, unit_col, df_dim: pd.Data
     df.loc[mask, unit_col] = "MG"
 
     df.drop(columns=right_cols, inplace=True)
-
-    return df
