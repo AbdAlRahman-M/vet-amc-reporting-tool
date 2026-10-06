@@ -53,6 +53,9 @@ if __name__ == "__main__":
     end_y, end_m = parse_period_date(args.period_end)
     period_end = date(end_y, end_m, calendar.monthrange(end_y, end_m)[1])
 
+    if period_start > period_end:
+        sys.exit(f"Invalid input for reporting period: from '{period_start}' to '{period_end}'")
+
     # Load and transform data
     print("Loading data...")
 
@@ -63,6 +66,7 @@ if __name__ == "__main__":
         df_combined = transform.combine_data(dir_path=DATA_PATH, sheet_name=SHEET_NAME)
         df_combined = transform.standardize_col_names(df_combined)
         df_combined = transform.remove_irrelevant_cols(df_combined)
+        df_combined["vet_unit_id"] = df_combined["vet_unit_id"].str.strip().str.upper()
         df_combined = transform.unpivot_active_subst(df_combined)
         df_combined = transform.standardize_units(df_combined, "api_per_content", "api_per_content_unit")
         df_combined = transform.standardize_units(df_combined, "pack_size", "pack_size_unit")
@@ -75,6 +79,18 @@ if __name__ == "__main__":
 
     print("Data loaded and transformed successfully...")
 
-    df_combined.to_excel("./out.xlsx", index=False)
+    # Validate unit codes
+    print("Checking veterinary unit codes...")
+    try:
+        df_vet_units = pd.read_excel("./data/dimensions/vet-units.xlsx", sheet_name="Vet. Units")
+    except FileNotFoundError:
+        sys.exit("The veterinary units file could not be found! Place it in './data/dimensions/' before running the script.")
+    
+    df_vet_units.rename(columns=lambda col: col.replace(" ", "_").lower(), inplace=True)
+    df_vet_units["id"] = df_vet_units["id"].str.strip().str.upper()
+
+    diff = set(df_combined["vet_unit_id"]) - set(df_vet_units["id"])
+    if diff:  # if any reported unit codes are not in the reference sheet
+        sys.exit(f"Invalid veterinary units codes '{','.join(diff)}' found in the data!")
 
     # Generate reports

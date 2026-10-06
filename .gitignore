@@ -5,5 +5,6 @@ __pycache__/
 .venv/
 data/consumption-files/*
 data/consumption-files/!.getkeep
+data/dimensions/vet-units.xlsx
 output/!.gitkeep
 .vscode/
