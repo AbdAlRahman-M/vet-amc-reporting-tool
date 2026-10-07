@@ -6,5 +6,7 @@ __pycache__/
 data/consumption-files/*
 data/consumption-files/!.getkeep
 data/dimensions/vet-units.xlsx
+output/
 output/!.gitkeep
 .vscode/
+~$*.xls?
